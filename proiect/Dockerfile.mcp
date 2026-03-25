@@ -1,0 +1,24 @@
+# Folosim Python 3.11 slim
+FROM python:3.11-slim
+
+# Setăm directorul de lucru
+WORKDIR /app
+
+# Instalăm doar FastMCP
+RUN pip install --no-cache-dir --timeout=300 fastmcp>=0.1.0 && pip cache purge
+
+# Creăm directorul sandbox
+RUN mkdir -p /app/test_data
+
+# Copiem serverul MCP
+COPY my_server_http.py .
+COPY __init__.py .
+
+# Expunem portul
+EXPOSE 8001
+
+# Variabilă de mediu
+ENV SANDBOX_FOLDER="/app/test_data"
+
+# Pornim serverul
+CMD ["python", "-u", "my_server_http.py"]

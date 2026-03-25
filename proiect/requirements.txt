@@ -1,0 +1,4 @@
+google-adk>=0.2
+fastmcp>=0.1.0
+litellm>=1.43.0
+protobuf~=6.33.0

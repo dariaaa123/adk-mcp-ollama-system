@@ -1,0 +1,88 @@
+# ============================================
+# Environment Variables - CRITICAL SECURITY
+# ============================================
+.env
+*.env
+.env.*
+!.env.example
+
+# ============================================
+# Python
+# ============================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Python build
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ============================================
+# Node.js / Angular
+# ============================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Angular build output
+dist/
+tmp/
+.angular/
+
+# Angular cache
+.sass-cache/
+connect.lock/
+coverage/
+libpeerconnection.log
+testem.log
+typings/
+
+# ============================================
+# IDEs and Editors
+# ============================================
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+*~
+.DS_Store
+Thumbs.db
+
+# ============================================
+# Docker
+# ============================================
+*.log
+
+# ============================================
+# Test Data (optional - uncomment if needed)
+# ============================================
+# proiect/test_data/
+
+# ============================================
+# Git
+# ============================================
+.git/

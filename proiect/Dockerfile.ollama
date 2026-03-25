@@ -1,0 +1,38 @@
+# Folosim imaginea oficială Ollama
+FROM ollama/ollama:latest
+
+# Expunem portul pe care rulează Ollama
+EXPOSE 11434
+
+# Creăm un script de inițializare
+RUN echo '#!/bin/bash\n\
+set -e\n\
+\n\
+echo "Starting Ollama server..."\n\
+ollama serve &\n\
+\n\
+# Așteptăm ca serverul să pornească\n\
+echo "Waiting for Ollama to be ready..."\n\
+sleep 10\n\
+\n\
+# Verificăm dacă modelul există deja\n\
+if ! ollama list | grep -q "llama3.2:3b"; then\n\
+    echo "Downloading llama3.2:3b model..."\n\
+    ollama pull llama3.2:3b\n\
+    echo "Model downloaded successfully!"\n\
+else\n\
+    echo "Model llama3.2:3b already exists."\n\
+fi\n\
+\n\
+echo "Ollama is ready with llama3.2:3b model!"\n\
+\n\
+# Menținem containerul activ\n\
+wait' > /usr/local/bin/start-ollama.sh && chmod +x /usr/local/bin/start-ollama.sh
+
+# Resetăm complet entrypoint-ul original al imaginii Ollama
+# Resetăm complet entrypoint-ul original și pornim scriptul nostru
+ENTRYPOINT ["/bin/bash", "-c", "/usr/local/bin/start-ollama.sh"]
+
+
+
+

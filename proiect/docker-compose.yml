@@ -1,0 +1,52 @@
+services:
+  ollama:
+    build:
+      context: .
+      dockerfile: Dockerfile.ollama
+    container_name: ollama-llama3.2
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    restart: unless-stopped
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.mcp
+    container_name: mcp-server
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./test_data:/app/test_data
+    restart: unless-stopped
+    environment:
+      - SANDBOX_FOLDER=/app/test_data
+
+  adk-web:
+    build:
+      context: .
+      dockerfile: Dockerfile.adk
+    container_name: adk-web
+    ports:
+      - "8082:8080"
+    restart: unless-stopped
+    environment:
+      - MCP_URL=http://mcp-server:8001/sse
+      - OLLAMA_HOST=http://ollama:11434
+    depends_on:
+      ollama:
+        condition: service_healthy
+      mcp-server:
+        condition: service_started
+
+volumes:
+  ollama-data:
+    driver: local

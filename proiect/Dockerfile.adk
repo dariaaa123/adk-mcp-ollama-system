@@ -1,0 +1,38 @@
+# Folosim Python 3.11 slim
+FROM python:3.11-slim
+
+# Setăm directorul de lucru
+WORKDIR /app
+
+# Instalăm dependențele
+RUN pip install --no-cache-dir --timeout=300 \
+    google-adk>=0.2 \
+    litellm>=1.43.0 \
+    && pip cache purge
+
+# Copiem sitecustomize.py în site-packages pentru a se executa automat
+# Acest fișier se va executa ÎNAINTE de orice alt import Python
+COPY sitecustomize.py /usr/local/lib/python3.11/site-packages/sitecustomize.py
+
+# Copiem și bypass-ul pentru tiktoken (backup)
+COPY bypass_tiktoken.py /app/bypass_tiktoken.py
+
+# Creăm structura pentru agent
+RUN mkdir -p agents/sysadmin_agent
+
+# Copiem fișierele agentului
+COPY agent_auth.py agents/sysadmin_agent/agent.py
+COPY __init__.py agents/sysadmin_agent/__init__.py
+
+# Variabile de mediu
+ENV MCP_URL="http://mcp-server:8001/sse"
+ENV OLLAMA_HOST="http://ollama:11434"
+ENV PYTHONUNBUFFERED=1
+# Adăugăm /app la PYTHONPATH pentru a găsi bypass_tiktoken
+ENV PYTHONPATH="/app:${PYTHONPATH}"
+
+# Expunem portul
+EXPOSE 8080
+
+# Pornim ADK web
+CMD ["adk", "web", "agents", "--host", "0.0.0.0", "--port", "8080"]
