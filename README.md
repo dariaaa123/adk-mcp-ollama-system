@@ -95,41 +95,6 @@ docker-compose logs -f adk-web
 docker exec -it adk-web /bin/bash
 ```
 
-## Troubleshooting
-
-### Container nu pornește
-```powershell
-docker logs <container-name>
-```
-
-### Rebuild complet
-```powershell
-docker-compose down
-docker-compose build --no-cache
-docker-compose up -d
-```
-
-### Verificare networking între containere
-```powershell
-docker exec -it adk-web ping ollama
-docker exec -it adk-web ping mcp-server
-```
-
-## Cerințe Îndeplinite
-
-  **Imagine Docker pentru Ollama** cu llama3.2:3b
-  **Imagine Docker pentru MCP Server** cu HTTP streaming (SSE)
-  **Imagine Docker pentru ADK Web** cu agent
-  **Docker-compose** pentru orchestrare
-  **Comunicare între containere** prin Docker network
-  **Rezolvat problema tiktoken** SSL error prin monkey patching
-
-## Note Importante
-
-- **Tiktoken Bypass**: Agentul folosește un bypass pentru tiktoken deoarece Docker container-ul nu poate descărca encodings de pe internet. Acest lucru nu afectează funcționalitatea pentru modele locale Ollama.
-- **Volumes**: Ollama folosește un volume persistent pentru a păstra modelul descărcat
-- **Health Checks**: Ollama are health check pentru a asigura că modelul este încărcat înainte ca ADK Web să pornească
-
 ## Arhitectura Sistemului
 
 ```
@@ -169,10 +134,4 @@ docker exec -it adk-web ping mcp-server
 | 8001 | MCP Server | HTTP SSE endpoint |
 | 8082 | ADK Web | Interfață web pentru agent |
 | 11434 | Ollama | API pentru modelul de limbaj |
-
-## Documentație Suplimentară
-
-- `REZOLVARE_TIKTOKEN.md` - Detalii tehnice despre soluția tiktoken
-- `INSTRUCTIUNI_TESTARE.md` - Ghid complet de testare
-- `STATUS_FINAL.md` - Status complet al proiectului
 
