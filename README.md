@@ -1,16 +1,18 @@
+
 # ADK MCP Ollama System
 
-Sistem complet de agenți AI cu interfață web, server MCP (Model Context Protocol) și model local Ollama, containerizat cu Docker.
+A complete AI agent system with web interface, MCP (Model Context Protocol) server, and local Ollama model, containerized with Docker.
 
-##  Descriere
+## Description
 
-Acest proiect integrează:
-- **ADK Web UI** - Interfață web Angular pentru interacțiune cu agentul
-- **MCP Server** - Server FastMCP cu tool-uri pentru operații pe fișiere
-- **Ollama** - Model local de limbaj (llama3.2:3b)
-- **Agent Sysadmin** - Agent AI care folosește tool-urile MCP pentru administrare sistem
+This project integrates:
 
-##  Arhitectură
+* **ADK Web UI** - Angular web interface for interacting with the agent
+* **MCP Server** - FastMCP server with tools for file operations
+* **Ollama** - Local language model (llama3.2:3b)
+* **Sysadmin Agent** - AI agent that uses MCP tools for system administration
+
+## Architecture
 
 ```
 ┌─────────────┐
@@ -37,109 +39,109 @@ Acest proiect integrează:
 └─────────────────┘
 ```
 
-##  Pornire Rapidă
+## Quick Start
 
-### Cerințe
-- Docker & Docker Compose
-- ~4GB spațiu liber (pentru modelul Ollama)
+### Requirements
 
-### Instalare și Rulare
+* Docker & Docker Compose
+* ~4GB free space (for the Ollama model)
+
+### Installation and Run
 
 ```bash
-# Clonează repository-ul
+# Clone the repository
 git clone <repo-url>
 cd <repo-name>
 
-# Pornește toate containerele
+# Start all containers
 cd proiect
 docker-compose up -d
 
-# Verifică statusul
+# Check status
 docker ps
 
-# Vezi logs
+# View logs
 docker-compose logs -f
 ```
 
-### Accesare
+### Access
 
-- **ADK Web Interface**: http://localhost:8082
-- **Ollama API**: http://localhost:11434
-- **MCP Server**: http://localhost:8001/sse
+* **ADK Web Interface**: [http://localhost:8082](http://localhost:8082)
+* **Ollama API**: [http://localhost:11434](http://localhost:11434)
+* **MCP Server**: [http://localhost:8001/sse](http://localhost:8001/sse)
 
-##  Testare
+## Testing
 
-1. Deschide browser la http://localhost:8082
-2. Selectează agentul "sysadmin_agent"
-3. Trimite un mesaj: "Listează fișierele din directorul curent"
-4. Agentul va folosi tool-urile MCP pentru a răspunde
+1. Open browser at [http://localhost:8082](http://localhost:8082)
+2. Select the "sysadmin_agent" agent
+3. Send a message: "List files in the current directory"
+4. The agent will use MCP tools to respond
 
-##  Structura Proiectului
+## Project Structure
 
 ```
 .
-├── adk-web/                    # Frontend Angular
-│   ├── src/                    # Cod sursă Angular
+├── adk-web/                    # Angular frontend
+│   ├── src/                    # Angular source code
 │   ├── package.json
 │   └── angular.json
 │
-└── proiect/                    # Backend Python
-    ├── my_server_http.py       # MCP Server (FastMCP cu SSE)
-    ├── agent_auth.py           # Configurare agent ADK
-    ├── sitecustomize.py        # Bypass tiktoken pentru Docker
+└── proiect/                    # Python backend
+    ├── my_server_http.py       # MCP Server (FastMCP with SSE)
+    ├── agent_auth.py           # ADK agent configuration
+    ├── sitecustomize.py        # tiktoken bypass for Docker
     ├── bypass_tiktoken.py      # Backup bypass
-    ├── docker-compose.yml      # Orchestrare containere
-    ├── Dockerfile.mcp          # Container MCP Server
-    ├── Dockerfile.adk          # Container ADK Web
-    ├── Dockerfile.ollama       # Container Ollama
-    ├── requirements.txt        # Dependențe Python
-    └── README_DOCKER.md        # Documentație detaliată Docker
+    ├── docker-compose.yml      # Container orchestration
+    ├── Dockerfile.mcp          # MCP Server container
+    ├── Dockerfile.adk          # ADK Web container
+    ├── Dockerfile.ollama       # Ollama container
+    ├── requirements.txt        # Python dependencies
+    └── README_DOCKER.md        # Detailed Docker documentation
 ```
 
-##  Containere Docker
+## Docker Containers
 
-| Container | Port | Descriere |
-|-----------|------|-----------|
-| adk-web | 8082 | Interfață web pentru agent |
-| mcp-server | 8001 | Server MCP cu tool-uri pentru fișiere |
-| ollama | 11434 | Model local llama3.2:3b |
+| Container  | Port  | Description                 |
+| ---------- | ----- | --------------------------- |
+| adk-web    | 8082  | Web interface for the agent |
+| mcp-server | 8001  | MCP server with file tools  |
+| ollama     | 11434 | Local model llama3.2:3b     |
 
-##  Tool-uri MCP Disponibile
+## Available MCP Tools
 
-- **list_directory** - Listează fișiere și directoare recursiv
-- **get_file_content** - Citește conținutul unui fișier
+* **list_directory** - Lists files and directories recursively
+* **get_file_content** - Reads the contents of a file
 
-##  Configurare
+## Configuration
 
-### Variabile de Mediu
+### Environment Variables
 
-Creează un fișier `.env` în root (opțional):
+Create a `.env` file in the root (optional):
 
 ```bash
 MCP_API_KEY=your-secret-key-here
 ```
 
-### Customizare Agent
+### Agent Customization
 
-Editează `proiect/agent_auth.py` pentru a modifica:
-- Instrucțiunile agentului
-- Tool-urile disponibile
-- Modelul de limbaj folosit
+Edit `proiect/agent_auth.py` to modify:
 
+* Agent instructions
+* Available tools
+* Language model used
 
-##  Note Tehnice
+## Technical Notes
 
-### Rezolvarea Problemei Tiktoken
+### Fixing the Tiktoken Issue
 
-Docker container-ul nu poate descărca encodings tiktoken de pe internet din cauza SSL errors. Am implementat un bypass complet prin:
-- `sitecustomize.py` - se execută automat la pornirea Python
-- Mock-uiește toate apelurile tiktoken
-- Pentru modele locale Ollama, tiktoken nu este necesar
+The Docker container cannot download tiktoken encodings from the internet due to SSL errors. A complete bypass has been implemented using:
 
-### Volumes Docker
+* `sitecustomize.py` - automatically executed at Python startup
+* Mocks all tiktoken calls
+* For local Ollama models, tiktoken is not required
 
-- **ollama-data** - Păstrează modelul llama3.2:3b descărcat (~2GB)
-- **test_data** - Director pentru testare (mount din proiect)
+### Docker Volumes
 
----
+* **ollama-data** - Stores the downloaded llama3.2:3b model (~2GB)
+* **test_data** - Directory for testing (mounted from the project)
 
